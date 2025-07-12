@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, Grid, Heading, Text, Stack, Icon } from '@chakra-ui/react';
 import { FaShieldAlt, FaChartLine, FaUserFriends } from 'react-icons/fa';
 
