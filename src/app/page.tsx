@@ -5,16 +5,15 @@ import { MarketIndices } from '@/widgets/market-indices';
 import { PopularStocks } from '@/widgets/popular-stocks';
 import { Features } from '@/widgets/features';
 import { Cta } from '@/widgets/cta';
-import { createClient } from '@/shared/utils/supabase/server';
+import { clientApi } from '@/shared/api';
 
 /**
  * 모의투자 사이트 메인 페이지
  * FSD 아키텍쳐를 따라 위젯들로 구성되어 있습니다.
  */
 export default async function HomePage() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-  console.log(data, error);
+  const data = await clientApi.get('auth/me').json();
+
   return (
     <Box bg="gray.50" minH="100vh" _dark={{ bg: 'gray.900' }}>
       {/* 헤더 */}

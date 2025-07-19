@@ -11,8 +11,9 @@ import {
 } from '@chakra-ui/react';
 import { RiKakaoTalkFill } from 'react-icons/ri';
 import { useState } from 'react';
-import { createClient } from '@/shared/utils/supabase/client';
-import { toaster } from '@/shared/ui/toaster';
+import { clientApi } from '@/shared/api';
+import { KISLoginResponse } from '@/shared/types/auth';
+import JsCookie from '@/shared/utils/cookies';
 
 /**
  * 로그인 페이지
@@ -20,41 +21,17 @@ import { toaster } from '@/shared/ui/toaster';
  */
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const supabase = createClient();
 
-  /**
-   * 카카오 로그인 처리
-   */
   const handleKakaoLogin = async () => {
-    try {
-      setIsLoading(true);
+    const data = await clientApi.get('auth/kakao').json();
+    const { url } = await data;
+    window.location.href = url;
+  };
 
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'kakao',
-        options: {
-          redirectTo: process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URL,
-        },
-      });
+  const handleKISLogin = async () => {
+    const data: KISLoginResponse = await clientApi.post('oauth2/tokenP').json();
 
-      if (error) {
-        throw error;
-      }
-
-      toaster.create({
-        title: '로그인 성공',
-        description: '카카오 로그인이 완료되었습니다.',
-        type: 'success',
-      });
-    } catch (err) {
-      console.error('카카오 로그인 에러:', err);
-      toaster.create({
-        title: '로그인 실패',
-        description: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.',
-        type: 'error',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    JsCookie.set('access_token', data.access_token, { expires: 1 });
   };
 
   return (
@@ -103,6 +80,16 @@ export default function LoginPage() {
               >
                 <Icon as={RiKakaoTalkFill} mr={2} />
                 카카오로 시작하기
+              </Button>
+              <Button
+                size="lg"
+                bg="#FEE500"
+                color="black"
+                _hover={{ bg: '#FDD835' }}
+                _active={{ bg: '#FBC02D' }}
+                onClick={handleKISLogin}
+              >
+                한국투자증권 로그인
               </Button>
             </Stack>
 
