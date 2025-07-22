@@ -18,10 +18,8 @@ export default async function HomePage() {
   try {
     const response = await getVolumeRankStocks(5);
     volumeRankStocks = response.data;
-    console.log('거래량 순위 데이터 조회 성공:', volumeRankStocks);
   } catch (error) {
     console.error('거래량 순위 데이터 조회 실패:', error);
-    // 에러 발생 시 빈 배열 사용
   }
 
   return (
