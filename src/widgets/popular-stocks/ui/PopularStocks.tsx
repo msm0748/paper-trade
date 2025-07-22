@@ -10,13 +10,25 @@ import {
   Stack,
   Separator,
 } from '@chakra-ui/react';
-import { mockPopularStocks, getChangeColor } from '@/entities/stock';
+import { VolumeRankStock } from '@/shared/types/stock.types';
+import {
+  formatPrice,
+  formatPriceChange,
+  formatVolume,
+  isPositiveChange,
+  getChangeColor,
+} from '@/entities/stock';
+
+interface Props {
+  /** 거래량 순위 데이터 */
+  stocks: VolumeRankStock[];
+}
 
 /**
  * 인기 종목 랭킹 위젯
- * 실시간 인기 종목 순위를 표시합니다.
+ * 실시간 거래량 순위를 표시합니다.
  */
-export const PopularStocks = () => {
+export function PopularStocks({ stocks }: Props) {
   return (
     <Box
       bg="white"
@@ -27,7 +39,7 @@ export const PopularStocks = () => {
     >
       <Flex justify="space-between" align="center" mb={6}>
         <Heading size="md" color="blue.500" _dark={{ color: 'blue.300' }}>
-          🏆 인기 종목
+          거래량 순위
         </Heading>
         <Button size="xs" variant="ghost">
           더보기
@@ -35,48 +47,57 @@ export const PopularStocks = () => {
       </Flex>
 
       <Stack gap={3}>
-        {mockPopularStocks.map((stock) => (
-          <Box key={stock.rank}>
-            <Flex justify="space-between" align="center" py={2}>
-              <Stack direction="row" gap={3} align="center">
-                <Badge
-                  colorScheme="blue"
-                  variant="solid"
-                  minW="24px"
-                  textAlign="center"
-                >
-                  {stock.rank}
-                </Badge>
-                <Box>
-                  <Text fontWeight="semibold" fontSize="sm">
-                    {stock.name}
+        {stocks.map((stock) => {
+          const isPositive = isPositiveChange(stock.priceChange);
+          const priceChangeText = formatPriceChange(
+            stock.priceChange,
+            stock.priceChangePercent
+          );
+
+          return (
+            <Box key={stock.stockCode}>
+              <Flex justify="space-between" align="center" py={2}>
+                <Stack direction="row" gap={3} align="center">
+                  <Badge
+                    colorScheme="blue"
+                    variant="solid"
+                    minW="20px"
+                    textAlign="center"
+                    justifyContent="center"
+                  >
+                    {stock.rank}
+                  </Badge>
+                  <Box>
+                    <Text fontWeight="semibold" fontSize="sm">
+                      {stock.stockName}
+                    </Text>
+                    <Text
+                      fontSize="xs"
+                      color="gray.600"
+                      _dark={{ color: 'gray.300' }}
+                    >
+                      {stock.stockCode} • 거래량 {formatVolume(stock.volume)}
+                    </Text>
+                  </Box>
+                </Stack>
+                <Stack gap={0} align="end">
+                  <Text fontWeight="bold" fontSize="sm">
+                    {formatPrice(stock.currentPrice)}원
                   </Text>
                   <Text
                     fontSize="xs"
-                    color="gray.600"
-                    _dark={{ color: 'gray.300' }}
+                    color={getChangeColor(isPositive)}
+                    fontWeight="semibold"
                   >
-                    {stock.code}
+                    {priceChangeText}
                   </Text>
-                </Box>
-              </Stack>
-              <Stack gap={0} align="end">
-                <Text fontWeight="bold" fontSize="sm">
-                  {stock.price}
-                </Text>
-                <Text
-                  fontSize="xs"
-                  color={getChangeColor(stock.isPositive)}
-                  fontWeight="semibold"
-                >
-                  {stock.change}
-                </Text>
-              </Stack>
-            </Flex>
-            {stock.rank < mockPopularStocks.length && <Separator />}
-          </Box>
-        ))}
+                </Stack>
+              </Flex>
+              {stock.rank < stocks.length && <Separator />}
+            </Box>
+          );
+        })}
       </Stack>
     </Box>
   );
-};
+}
