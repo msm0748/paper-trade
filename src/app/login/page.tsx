@@ -12,8 +12,6 @@ import {
 import { RiKakaoTalkFill } from 'react-icons/ri';
 import { useState } from 'react';
 import { clientApi } from '@/shared/api';
-import { KISLoginResponse } from '@/shared/types/auth';
-import JsCookie from '@/shared/utils/cookies';
 
 /**
  * 로그인 페이지
@@ -23,15 +21,9 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleKakaoLogin = async () => {
-    const data = await clientApi.get('auth/kakao').json();
-    const { url } = await data;
+    const data: { url: string } = await clientApi.get('auth/kakao').json();
+    const { url } = data;
     window.location.href = url;
-  };
-
-  const handleKISLogin = async () => {
-    const data: KISLoginResponse = await clientApi.post('oauth2/tokenP').json();
-
-    JsCookie.set('access_token', data.access_token, { expires: 1 });
   };
 
   return (
@@ -80,16 +72,6 @@ export default function LoginPage() {
               >
                 <Icon as={RiKakaoTalkFill} mr={2} />
                 카카오로 시작하기
-              </Button>
-              <Button
-                size="lg"
-                bg="#FEE500"
-                color="black"
-                _hover={{ bg: '#FDD835' }}
-                _active={{ bg: '#FBC02D' }}
-                onClick={handleKISLogin}
-              >
-                한국투자증권 로그인
               </Button>
             </Stack>
 
