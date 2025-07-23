@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { RiKakaoTalkFill } from 'react-icons/ri';
 import { useState } from 'react';
-import { clientApi } from '@/shared/api';
+import { api } from '@/shared/api';
 
 /**
  * 로그인 페이지
@@ -21,9 +21,17 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleKakaoLogin = async () => {
-    const data: { url: string } = await clientApi.get('auth/kakao').json();
-    const { url } = data;
-    window.location.href = url;
+    try {
+      setIsLoading(true);
+      const data: { url: string } = await api.get('auth/kakao').json();
+      const { url } = data;
+      setIsLoading(false);
+      window.location.href = url;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

@@ -1,4 +1,4 @@
-import { clientApi } from '@/shared/api';
+import { api } from '@/shared/api';
 import { VolumeRankResponse } from '@/shared/types/stock.types';
 
 /**
@@ -10,7 +10,7 @@ export async function getVolumeRankStocks(
   count: number = 5
 ): Promise<VolumeRankResponse> {
   try {
-    const response = await clientApi
+    const response = await api
       .get(`kis-api/volume-rank?count=${count}`)
       .json<VolumeRankResponse>();
     return response;
