@@ -54,7 +54,7 @@ export default function LoginPage() {
             {/* 로고 및 제목 */}
             <Stack gap={4} align="center" textAlign="center">
               <Heading size="lg" color="blue.500">
-                Paper Trade
+                stock sandbox
               </Heading>
               <Text fontSize="2xl" fontWeight="bold">
                 로그인하고 시작하세요
